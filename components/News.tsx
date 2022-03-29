@@ -1,23 +1,47 @@
-import { StyleSheet } from 'react-native';
+import { Component } from 'react';
+import { FlatList, StyleSheet } from 'react-native';
 import { Text, View } from './Themed';
 
 
-export default function EditScreenInfo({ path }: { path: string }) {
+class ListPost extends Component {
+    constructor (props) {
+      super(props)
+      this.state = {
+        posts: [],
+        refresh: false
+      }
+    }
+  
+    init = async () => {
+      try {
+        await this.props.loadInitPosts()
+        await this.setState({
+          posts: this.props.posts
+        })
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    render () {
   return (
-    <View>
-      <View style={styles.mainContainer}>
-        <Text
-          style={styles.mainText}
-          lightColor="rgba(0,0,0,0.8)"
-          darkColor="rgba(255,255,255,0.8)">
-          Bonjour comment allez vous ?
-        </Text>
-      </View>
+    <View style={styles.container}> 
+        <FlatList
+        //   contentContainerStyle={styles.element}
+          data={this.props.posts}
+          extraData={this.props.posts}
+          renderItem={({ item }) => <Post post={item} />}
+          keyExtractor={(item, index) => index.toString()}
+        />
     </View>
-  );
+    )
+    }
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+      },
   mainContainer: {
     alignItems: 'center',
     marginHorizontal: 50,
